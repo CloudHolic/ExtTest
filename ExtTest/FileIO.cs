@@ -15,8 +15,15 @@ public interface HasFile<RT> where RT : struct, HasFile<RT>
     Eff<RT, FileIO> FileEff { get; }
 }
 
-public class LiveEnv : FileIO
+public struct LiveRuntime : HasFile<LiveRuntime>
 {
+    public Eff<LiveRuntime, FileIO> FileEff => SuccessEff(LiveFileIO.Default);
+}
+
+public class LiveFileIO : FileIO
+{
+    public static readonly FileIO Default = new LiveFileIO();
+
     public string ReadAllText(string path) => File.ReadAllText(path);
 
     public Unit WriteAllText(string path, string text)
